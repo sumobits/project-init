@@ -98,6 +98,7 @@ export const createBackendProject = async opts => {
     }
 
     const packageJSON = {
+        name: project,
         author: author,
         license: license,
         'repository': (baseRepository + project),
@@ -106,9 +107,9 @@ export const createBackendProject = async opts => {
     };
 
     try {
+        console.log(path.join(__dirname, 'static'));
         await fs.copy(path.join(__dirname, 'static'), location, { overwrite: true });
-
-        await fs.writeJson('package.json', packageJSON, { spaces: 4 });
+        await fs.writeJson(path.join(location, 'package.json'), packageJSON, { spaces: 4 });
 
         let devDepends = '', depends = '';
 
