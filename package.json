@@ -1,0 +1,33 @@
+{
+  "name": "sumobits-project-init",
+  "version": "0.0.1",
+  "description": "A simple project to generate Node project scaffolding",
+  "main": "./dist/index.js",
+  "author": "Tim Cook<sumobits@protonmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {},
+  "scripts": {
+    "start": "gulp && node ./dist/index.js",
+    "start-debug": "gulp package-debug && node ./dist/index.js --inspect",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "clean": "rm -rf node_modules && rm yarn.lock && yarn cache clean",
+    "reinstall": "rm -rf node_modules && rm yarn.lock && yarn cache clean && yarn install"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/register": "^7.11.5",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.9.0",
+    "eslint-plugin-import": "^2.22.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-eslint": "^6.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-uglify": "^3.0.2",
+    "jest": "^26.5.0"
+  }
+}
