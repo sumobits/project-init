@@ -1,67 +1,68 @@
 /**
  * @format
  */
-import prompt from 'prompt';
+import prompts from 'prompts';
 import { createBackendProject } from './backend';
 
-const options = {
-    properties: {
-        project: {
-            description: 'Project name',
-            required: true,
-            type: 'string',
+const options = [
+        {
+            message: 'What is the project\'s name?',
+            name: 'name',
+            type: 'text',
+            validate: value => (!value || value.length === 0) ? 'Prject Name is required. Please try again.' : true,
         },
-        location: {
-            default: '..',
-            description: 'Path where to create the project',
-            required: true,
-            type: 'string',
+        {
+            format: (val, values) => (!val || val.length === 0) ? `../${values.name}` : val,
+            message: 'Path where to create the project?',
+            name: 'location',
+            type: 'text',
         },
-        stack: {
-            default: 'back',
-            description: 'Is the project front, back or both',
-            pattern: /(?:^|\W)back|both|front(?:$|\W)/g,
-            required: true,
-            type: 'string',
+        {
+            choices: [
+                { title: 'Backend', value: 'back' },
+                { title: 'Frontend', value: 'front' },
+                { title: 'Both', value: 'both' }
+            ],
+            intial: 1,
+            message: 'Is the project frontend, backend or both?',
+            name: 'stack',
+            type: 'select',
         },
-        optional: {
-            default: false,
-            description: 'Include optional dependencies',
-            type: 'boolean',
+        {
+            initial: false,
+            message: 'Include optional dependencies for stack?',
+            name: 'optional',
+            type: 'toggle',
         },
-        firebase: {
-            default: false,
-            description: 'Use Firebase',
-            type: 'boolean',
+        {
+            initial: false,
+            message: 'Include Firebase deependencies for stack?',
+            name: 'firebase',
+            type: 'toggle',
         },
-        mongodb: {
-            default: false,
-            description: 'Use MongoDB persistence',
-            type: 'boolean',
+        {
+            initial: false,
+            message: 'Include MongoDB dependecies for stack?',
+            name: 'mongodb',
+            type: 'toggle',
         },
-        postgres: {
-            default: false,
-            description: 'Use Postgres for persistence',
-            default: false,
-            type: 'boolean',
-        },  
-    },
-};
+        {
+            inital: false,
+            message: 'Include Postgres dependencies for stack?',
+            name: 'postgres',
+            type: 'toggle',
+        }, 
+];
 
-prompt.start();
-
-prompt.get(options, async (err, result) => {
-    if (err) {
-        throw err;
-    }
-
-    const { stack } = result;
+(async () => {
+    const results = await prompts(options);
+    const { stack } = results;
 
     if (stack === 'back') {
-        await createBackendProject(result);
-    } else if (stack === 'both') {
+        await createBackendProject(results);
+    } else if (stack === 'front') {
         // create client and server modules
     } else {
-        // must be front only
+        // lets create both as a mono-project
     }
-});
+})();

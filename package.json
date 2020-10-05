@@ -9,8 +9,7 @@
   "dependencies": {
     "del": "^6.0.0",
     "fs-extra": "^9.0.1",
-    "glob": "^7.1.6",
-    "prompt": "^1.0.0"
+    "prompts": "^2.3.2"
   },
   "scripts": {
     "start": "gulp && node ./dist/index.js",
@@ -18,7 +17,8 @@
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "clean": "rm -rf node_modules && rm yarn.lock && yarn cache clean",
-    "reinstall": "rm -rf node_modules && rm yarn.lock && yarn cache clean && yarn install"
+    "reinstall": "rm -rf node_modules && rm yarn.lock && yarn cache clean && yarn install",
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",
@@ -29,6 +29,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^7.9.0",
     "eslint-plugin-import": "^2.22.0",
+    "glob": "^7.1.6",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-eslint": "^6.0.0",

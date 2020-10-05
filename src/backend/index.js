@@ -67,15 +67,10 @@ export const createBackendProject = async opts => {
         firebase,
         location,
         mongodb,
+        name,
         optional,
         postgres,
-        project,
     } = opts;
-
-    if (!project) {
-        throw new Error(
-            'project name is required in order to generate backend project');
-    }
 
     const dependencies = new Set();
 
@@ -98,16 +93,15 @@ export const createBackendProject = async opts => {
     }
 
     const packageJSON = {
-        name: project,
-        author: author,
-        license: license,
-        'repository': (baseRepository + project),
-        version: version,
-        scripts: scripts,
+        name,
+        author,
+        license,
+        'repository': (baseRepository + name),
+        version,
+        scripts,
     };
 
     try {
-        console.log(path.join(__dirname, 'static'));
         await fs.copy(path.join(__dirname, 'static'), location, { overwrite: true });
         await fs.writeJson(path.join(location, 'package.json'), packageJSON, { spaces: 4 });
 
