@@ -14,7 +14,7 @@ export const options = [ {
         type: 'text',
     }, {
         choices: [
-            { title: 'Backend', selected: true, value: 'back' },
+            { title: 'Backend', value: 'back' },
             { title: 'Frontend Web', value: 'front-web' },
             { title: 'Frontend Mobile', value: 'front-mobile' },
         ],
@@ -49,8 +49,7 @@ export const options = [ {
         type: (prev, values) => {
             const { stacks } =  values;
             const filtedStacks = stacks.filter(stack => stack.indexOf('front-') >= 0 );
-            console.log(`prev=${prev}`);
-            console.log(`fs=${filtedStacks}`);
+
             if (!prev && filtedStacks.length === 0) {
                 return 'toggle';
             } 
