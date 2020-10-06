@@ -1,7 +1,12 @@
 module.exports = {
-	parser: 'babel-eslint',
 	root: true,
+	parserOptions: {
+		'ecmaVersion': 2017,
+		'sourceType': 'module',
+		'ecmaFeatures': { 'jsx': true }
+	},
 	rules: {
+		'indent': [ 2, 'tab' ],
 		'prefer-const': [ 2, {
 			'destructuring': 'all',
 			'ignoreReadBeforeAssign': false
@@ -10,9 +15,12 @@ module.exports = {
 		'no-var': [ 2 ],
 		'no-new-object': [ 2 ],
 		'no-array-constructor': [ 2 ],
-		'prefer-destructuring': [ 2, { 'object': true } ],
-		'quotes': [ 1, 'single' ],
-		'prefer-template': [ 1 ],
+		'prefer-destructuring': [ 2, {
+			'object': true,
+			'array': true
+		} ],
+		'quotes': [ 2, 'single' ],
+		'prefer-template': [ 2 ],
 		'no-eval': [ 2 ],
 		'prefer-rest-params': [ 2 ],
 		'space-before-blocks': [ 1, 'always' ],
@@ -23,7 +31,9 @@ module.exports = {
 		'no-useless-constructor': [ 2 ],
 		'no-dupe-class-members': [ 2 ],
 		'no-duplicate-imports': [ 2 ],
-		'object-curly-newline': [ 2, 'always' ],
+		'object-curly-newline': [ 2, {
+			'multiline': false, 'minProperties': 2
+		} ],
 		'dot-notation': [ 2 ],
 		'max-len': [ 1, 120 ],
 		'eqeqeq': [ 2, 'always' ],

@@ -24,7 +24,8 @@ module.exports = {
 		'no-dupe-class-members': [ 2 ],
 		'no-duplicate-imports': [ 2 ],
 		'object-curly-newline': [ 2, { 
-			'multiline': true, 'minProperties': 5
+			'multiline': true, 
+			'minProperties': 5
 		} ],
 		'dot-notation': [ 2 ],
 		'max-len': [ 1, 120 ],

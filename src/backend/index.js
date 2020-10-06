@@ -3,10 +3,7 @@
  */
 import fs from 'fs-extra';
 import path from 'path';
-import {
-    addDepenedency,
-    addDevDependency,
-} from '../utils';
+import { addDependency } from '../utils';
 
 const author = 'TJ Cook<sumobits@protonmail.com>';
 const baseDependencies = [
@@ -104,13 +101,15 @@ export const createBackendProject = async opts => {
     try {
         await fs.copy(path.join(__dirname, 'static'), location, { overwrite: true });
         await fs.writeJson(path.join(location, 'package.json'), packageJSON, { spaces: 4 });
+        await fs.ensureDir(path.join(location, 'src'), 776);
 
         let devDepends = '', depends = '';
 
         devDependencies.forEach(entry => devDepends += `${entry} `);
         dependencies.forEach(entry => depends += `${entry} `);
-        addDevDependency(location, devDepends);
-        addDepenedency(location, depends);
+        addDependency(location, devDepends, true);
+        addDependency(location, depends, false);
+
         return 0;
     }
     catch (e) {

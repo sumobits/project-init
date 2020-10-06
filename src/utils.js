@@ -1,23 +1,111 @@
 /**
  * @format
  */
-import { execSync } from 'child_process';
+import { 
+    exec,
+    execSync 
+} from 'child_process';
 
- const addDepenedency = (cwd, dependency) => {
-    execSync(`yarn add ${dependency}`, {
+const addDependency = (cwd, dependency, isDev) => {
+    if (!dependency) return;
+
+    execSync(`yarn add ${dependency} ${isDev ? '--dev' : null}`, {
         cwd,
         stdio: 'inherit',
     });
- };
+};
 
- const addDevDependency = (cwd, dependency) => {
-     execSync(`yarn add --dev ${dependency}`, {
-         cwd,
-         stdio: 'inherit',
-     });
- };
+const createReactNativeProject = (projectName, location) => {
+    if (!projectName || !location) return;
 
- export { 
-     addDepenedency,
-     addDevDependency,
+    execSync(`npx react-native init ${projectName}`, {
+        location,
+        stdio: 'inherit',
+    });
+};
+
+const verifyEnvironment = async () => {
+    console.info('Verifying environment ....');
+    let verified = false;
+
+    while (!verified) {
+        if (await verifyYarn()) {
+            if (await verifyNPX()) {
+                console.info('Environment is configured.');
+                verified = true;
+            }
+            else {
+                console.warn('Installing NPX globally ....');
+                await installNPX();
+            }
+        }
+        else {
+            console.warn('Installing Yarn globally ....');
+            await installYarn();
+        }
+    }
+
+    return verified;
+};
+
+/**
+ * NOTES
+ * non-exported functions below. for internal use only.
+ */
+const installApp = async (cmd) => {
+    if (!cmd) {
+        throw new Error('improper usage of internal function: installApp');
+    }
+
+    return new Promise((resolve, reject) => {
+        exec(cmd, (err) => {
+            if (err) {
+                reject (false);
+            }
+
+            resolve(true);
+        });
+    });
+};
+
+const installNPX = async () => {
+    console.info('Installing NPX globally ....');
+    return await installApp('yarn install --global npx');
+};
+
+const installYarn = async () => {
+    console.info('Installing Yarm globally ....');
+    return await installApp('npm --global install yarn');
+};
+
+const verifyApp = app => {
+    if (!app) {
+        throw new Error('improper usage of internal function: verifyApp');
+    }
+
+    return new Promise((resolve, reject) => {
+        exec(`which ${app}`, (err) => {
+            if (err) {
+                reject(false);
+            }
+
+            resolve(true);
+        });
+    });
+};
+
+const verifyNPX = async () => {
+    console.info('Verifying NPX globally ....');
+    return await verifyApp('npx');
+};
+
+const verifyYarn = async () => {
+    console.info('Verifying Yarn globally ....');
+    return await verifyApp('yarn');
+};
+
+export { 
+    addDependency,
+    createReactNativeProject,
+    verifyEnvironment,
 };
