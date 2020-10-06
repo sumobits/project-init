@@ -14,28 +14,26 @@ export const options = [ {
         type: 'text',
     }, {
         choices: [
-            { title: 'Backend', value: 'back' },
+            { title: 'Backend', selected: true, value: 'back' },
             { title: 'Frontend Web', value: 'front-web' },
             { title: 'Frontend Mobile', value: 'front-mobile' },
         ],
-        intial: 1,
+        hint: '- Space to select. Return to submit',
         message: ('Is the project backend only, backend & mobile, backend & ' 
             +' web, frontend web only  or frontend mobile only ?'),
-        max: 2,
-        name: 'stack',
+        max: 3,
+        min: 1,
+        name: 'stacks',
         type: 'multiselect',
     }, {
-        initial: false,
         message: 'Include optional dependencies for stack?',
         name: 'optional',
         type: 'toggle',
     }, {
-        initial: false,
         message: 'Include Firebase deependencies for stack?',
         name: 'firebase',
         type: 'toggle',
     }, {
-        initial: false,
         message: 'Include MongoDB dependecies for stack?',
         name: 'mongodb',
         type: (prev, values) => {
@@ -46,11 +44,14 @@ export const options = [ {
             return null;
         },
     }, {
-        inital: false,
         message: 'Include Postgres dependencies for stack?',
         name: 'postgres',
         type: (prev, values) => {
-            if (!prev && !values.stack || values.stack.indexOf('front-') === -1) {
+            const { stacks } =  values;
+            const filtedStacks = stacks.filter(stack => stack.indexOf('front-') >= 0 );
+            console.log(`prev=${prev}`);
+            console.log(`fs=${filtedStacks}`);
+            if (!prev && filtedStacks.length === 0) {
                 return 'toggle';
             } 
             

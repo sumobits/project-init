@@ -4,25 +4,23 @@
 import fs from 'fs-extra';
 import path from 'path';
 import {
+    author,
+    baseRepository,
+    baseScripts,
+    license,
+    version,
+} from '../common';
+import {
     addDependency,
     createReactNativeProject,
-} from '../utils';
+} from '../../utils';
 
-const author = 'TJ Cook<sumobits@protonmail.com>';
-const baseRepository = 'https://github.com/sumobits/';
-const license = 'MIT';
-const version = '0.0.1';
 const scripts = {
     'android-clean': 'rm -rf $HOME/.gradle/caches & rm -rf ./android/.gradle/caches/ & rm -rf ./android/app/build',
     'android-dev': 'npx react-native run-android --variant=debug --verbose',
     'android-release': 'npx react-native run-android --variant=release --verbose',
     'ios': 'npx react-native run-ios',
     'start': 'npx react-native start',
-    'test': 'jest',
-    'lint': 'eslint .',
-    'lint-fix': 'eslint . --fix',
-    'cleanup': 'rm -rf node_modules && rm -f yarn.lock && yarn cache clean',
-    'reinstall': 'rm -rf node_modules && rm -f yarn.lock && yarn cache clean && yarn install'
 };
 const baseDependencies = [
     '@react-native-community/masked-view',
@@ -72,7 +70,10 @@ export const createFrontendMobileProject = async opts => {
         license,
         'repository': (baseRepository + name),
         version,
-        scripts,
+        scripts: {
+            ...baseScripts,
+            ...scripts,
+        },
     };
 
     try {

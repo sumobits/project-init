@@ -2,8 +2,11 @@
  * @format
  */
 import prompts from 'prompts';
-import { createBackendProject } from './backend';
-import { createFrontendMobileProject } from './frontend';
+import { 
+    createBackendProject,
+    createFrontendMobileProject,
+    createFrontendWebProject,
+} from './stacks';
 import { verifyEnvironment } from './utils';
 import { options } from './questions';
 
@@ -15,12 +18,17 @@ import { options } from './questions';
     }
 
     const opts = await prompts(options);
-    const { stack } = opts;
+    const { stacks } = opts;
 
-    if (stack === 'back') {
-        await createBackendProject(opts);
-    } else if (stack === 'front-mobile') {
-        await createFrontendMobileProject(opts);
-    } else if (stack === 'front-web') {
-    }
+    stacks.forEach(async stack => {
+        if (stack === 'back') {
+            await createBackendProject(opts);
+        } 
+        else if (stack === 'front-mobile') {
+            await createFrontendMobileProject(opts);
+        } 
+        else if (stack === 'front-web') {
+            createFrontendWebProject(opts);
+        }
+    });
 })();

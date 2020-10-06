@@ -3,16 +3,21 @@
  */
 import fs from 'fs-extra';
 import path from 'path';
-import { addDependency } from '../utils';
+import {
+    author,
+    baseRepository,
+    baseScripts,
+    license,
+    version,
+} from '../common';
+import { addDependency } from '../../utils';
 
-const author = 'TJ Cook<sumobits@protonmail.com>';
 const baseDependencies = [
     'dotenv',
     'express',
     'lodash',
     'winston',
 ];
-const baseRepository = 'https://github.com/sumobits/';
 const devDependencies = [
     '@babel/cli',
     '@babel/core',
@@ -32,7 +37,6 @@ const devDependencies = [
 const firebaseDependencies = [
     'firebase',
 ];
-const license = 'MIT';
 const monogdbDependencies = [
     'apollo-datasource',
     'graphql',
@@ -51,13 +55,7 @@ const postgresDependencies = [
 const scripts = {
     'start': 'gulp && node ./dist/index.js',
     'start-debug': 'gulp package-debug && node ./dist/index.js --inspect',
-    'lint': 'eslint .',
-    'lint-fix': 'eslint . --fix',
-    'test': 'jest',
-    'clean': 'rm -rf node_modules && rm yarn.lock && yarn cache clean',
-    'reinstall': 'rm -rf node_modules && rm yarn.lock && yarn cache clean && yarn install'
 };
-const version = '0.0.1';
 
 export const createBackendProject = async opts => {
     const {
@@ -95,13 +93,16 @@ export const createBackendProject = async opts => {
         license,
         'repository': (baseRepository + name),
         version,
-        scripts,
+        scripts: {
+            ...baseScripts,
+            ...scripts,
+        },
     };
 
     try {
         await fs.copy(path.join(__dirname, 'static'), location, { overwrite: true });
         await fs.writeJson(path.join(location, 'package.json'), packageJSON, { spaces: 4 });
-        await fs.ensureDir(path.join(location, 'src'), 776);
+        await fs.ensureFile(path.join(location, 'src', 'index.js'));
 
         let devDepends = '', depends = '';
 
