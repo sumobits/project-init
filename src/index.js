@@ -20,15 +20,21 @@ import { options } from './questions';
     const opts = await prompts(options);
     const { stacks } = opts;
 
-    stacks.forEach(async stack => {
-        if (stack === 'back') {
-            await createBackendProject(opts);
-        } 
-        else if (stack === 'front-mobile') {
-            await createFrontendMobileProject(opts);
-        } 
-        else if (stack === 'front-web') {
-            createFrontendWebProject(opts);
-        }
-    });
+    if (stacks && stacks.length > 0) {
+        stacks.forEach(async stack => {
+            if (stack === 'back') {
+                await createBackendProject(opts);
+            }
+            else if (stack === 'front-mobile') {
+                await createFrontendMobileProject(opts);
+            }
+            else if (stack === 'front-web') {
+                createFrontendWebProject(opts);
+            }
+        });
+    }
+    else {
+        console.warn('No stacks specified. Bye');
+        process.exit();
+    }
 })();

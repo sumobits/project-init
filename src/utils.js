@@ -25,26 +25,27 @@ const createReactNativeProject = (projectName, location) => {
 };
 
 const verifyEnvironment = async () => {
-    console.info('Verifying environment ....');
+    console.info('------------------------------------------------');
+    console.info('    Verifying environment ....');
     let verified = false;
 
     while (!verified) {
         if (await verifyYarn()) {
             if (await verifyNPX()) {
-                console.info('Environment is configured.');
+                console.info('    Environment has been verified.');
                 verified = true;
             }
             else {
-                console.warn('Installing NPX globally ....');
+                console.warn('        Installing NPX globally ....');
                 await installNPX();
             }
         }
         else {
-            console.warn('Installing Yarn globally ....');
+            console.warn('        Installing Yarn globally ....');
             await installYarn();
         }
     }
-
+    console.info('------------------------------------------------');
     return verified;
 };
 
@@ -69,12 +70,10 @@ const installApp = async (cmd) => {
 };
 
 const installNPX = async () => {
-    console.info('Installing NPX globally ....');
     return await installApp('yarn install --global npx');
 };
 
 const installYarn = async () => {
-    console.info('Installing Yarm globally ....');
     return await installApp('npm --global install yarn');
 };
 
@@ -95,12 +94,12 @@ const verifyApp = app => {
 };
 
 const verifyNPX = async () => {
-    console.info('Verifying NPX globally ....');
+    console.info('                Verifying NPX globally ....');
     return await verifyApp('npx');
 };
 
 const verifyYarn = async () => {
-    console.info('Verifying Yarn globally ....');
+    console.info('                Verifying Yarn globally ....');
     return await verifyApp('yarn');
 };
 
