@@ -91,8 +91,6 @@ export const createFrontendMobileProject = async opts => {
         const packageJson = await fs.readJSON(
             path.join(location, sanitizedName, 'package.json'));
 
-        const output = path.join(location, sanitizedName, 'package.json');
-
         await fs.writeJson(path.join(location, sanitizedName,'package.json'), {
             name: sanitizedName,
             author,
