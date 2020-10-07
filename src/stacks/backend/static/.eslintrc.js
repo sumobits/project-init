@@ -10,7 +10,9 @@ module.exports = {
 		'no-var': [ 2 ],
 		'no-new-object': [ 2 ],
 		'no-array-constructor': [ 2 ],
-		'prefer-destructuring': [ 2, { 'object': true } ],
+		'prefer-destructuring': [ 2, {
+ 'object': true 
+} ],
 		'quotes': [ 1, 'single' ],
 		'prefer-template': [ 1 ],
 		'no-eval': [ 2 ],

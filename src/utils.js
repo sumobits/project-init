@@ -5,6 +5,7 @@ import {
     exec,
     execSync 
 } from 'child_process';
+import { stdout } from 'process';
 
 const addDependency = (cwd, dependency, isDev) => {
     if (!dependency) return;
@@ -15,12 +16,21 @@ const addDependency = (cwd, dependency, isDev) => {
     });
 };
 
-const createReactNativeProject = (projectName, location) => {
-    if (!projectName || !location) return;
+const createReactNativeProject = async (projectName, cwd) => {
+    if (!projectName || !cwd) return;
 
-    execSync(`npx react-native init ${projectName}`, {
-        location,
-        stdio: 'inherit',
+    console.info(`Creating react-native app ${projectName}`);
+    return new Promise((resolve, reject) => {
+        exec(`cd ${cwd} && npx react-native init ${projectName}`, (err, stdout) =>{
+            if (err) {
+                console.error(`Failed to create react-native app ${projectName} - ${err.msg}`);
+                reject(false);
+            }
+
+            console.info(`Successfully created react-native app: ${projectName}`);
+            console.debug(stdout);
+            resolve(true);
+        });
     });
 };
 

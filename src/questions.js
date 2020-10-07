@@ -28,7 +28,16 @@ export const options = [ {
     }, {
         message: 'Include optional dependencies for stack?',
         name: 'optional',
-        type: 'toggle',
+        type: (prev, values) => {
+            const { stacks } = values;
+            const filtedStacks = stacks.filter(stack => stack.indexOf('front-') >= 0);
+
+            if (filtedStacks.length === 0) {
+                return 'toggle';
+            }
+
+            return null;
+        },
     }, {
         message: 'Include Firebase deependencies for stack?',
         name: 'firebase',
@@ -37,10 +46,13 @@ export const options = [ {
         message: 'Include MongoDB dependecies for stack?',
         name: 'mongodb',
         type: (prev, values) => {
-            if (!values.stack || values.stack.indexOf('front-') === -1) {
+            const { stacks } = values;
+            const filtedStacks = stacks.filter(stack => stack.indexOf('front-') >= 0);
+
+            if (filtedStacks.length === 0) {
                 return 'toggle';
-            } 
-            
+            }
+
             return null;
         },
     }, {

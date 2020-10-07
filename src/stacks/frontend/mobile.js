@@ -3,6 +3,7 @@
  */
 import fs from 'fs-extra';
 import path from 'path';
+import { execSync } from 'child_process';
 import {
     author,
     baseRepository,
@@ -32,8 +33,6 @@ const baseDependencies = [
     'graphql',
     'graphql-tag',
     'prop-types',
-    'react',
-    'react-native',
     'react-native-gesture-handler',
     'react-native-reanimated',
     'react-native-screens',
@@ -44,12 +43,32 @@ const firebaseDependencies = [
     '@react-native-firebase/app',
 ];
 
+/**
+ *  Used to remove any character's the 
+ *  react-native cli deems invalid for project names
+ * @param {*} projectName 
+ */
+const sanitizeProjectName = projectName => {
+    const dirty = projectName.search(/\W|_/g);
+
+    if (dirty > -1) {
+        const first = (projectName.charAt(0).toUpperCase()
+            + projectName.slice(1, dirty));
+
+        const second = (projectName.charAt(dirty + 1).toUpperCase()
+            + projectName.slice(dirty + 2, projectName.length));
+
+        return (first + second);
+    }
+
+    return (projectName.charAt(0).toUpperCase() + projectName.slice(1));
+};
+
 export const createFrontendMobileProject = async opts => {
     const {
         firebase,
         location,
         name,
-        optional,
     } = opts;
 
     const dependencies = new Set();
@@ -60,34 +79,42 @@ export const createFrontendMobileProject = async opts => {
         firebaseDependencies.forEach(entry => dependencies.add(entry));
     }
 
-    if (optional) {
-        optionalDependencies.forEach(entry => dependencies.add(entry));
-    }
-
-    const packageJSON = {
-        name,
-        author,
-        license,
-        'repository': (baseRepository + name),
-        version,
-        scripts: {
-            ...baseScripts,
-            ...scripts,
-        },
-    };
-
     try {
-        await fs.copy(path.join(__dirname, 'static'), location, { overwrite: true });
-        await fs.writeJson(path.join(location, 'package.json'), packageJSON, { spaces: 4 });
+        await fs.ensureDir(location);
 
-        let depends = '';
+        const sanitizedName = sanitizeProjectName(name);
         
-        dependencies.forEach(entry => depends += `${entry} `);
-        addDependency(location, depends, false);
+        await createReactNativeProject(sanitizedName, location);
+
+        await fs.copy(path.join(__dirname, 'static'), 
+            path.join(location, sanitizedName), { overwrite: true });
+
+        const packageJson = await fs.readJSON(
+            path.join(location, sanitizedName, 'package.json'));
+
+        const output = path.join(location, sanitizedName, 'package.json');
+
+        await fs.writeJson(path.join(location, sanitizedName,'package.json'), {
+            name: sanitizedName,
+            author,
+            license,
+            repository: (baseRepository + name),
+            version,
+            scripts: {
+                ...baseScripts,
+                ...scripts,
+            },
+            ...packageJson,
+        }, { spaces: 4 });
+
+        // we add each dependency independently 
+        // allow for auto-linking to occur
+        dependencies.forEach(entry => addDependency(
+            path.join(location, sanitizedName), entry, false));
         return 0;
     }
     catch (e) {
-        console.log(`Error creating project: ${e.message}`);
+        console.log(`Error creating project: ${ e.message }`);
         return -1;
     }
 };
