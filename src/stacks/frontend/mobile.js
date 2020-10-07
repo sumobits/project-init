@@ -100,8 +100,8 @@ export const createFrontendMobileProject = async opts => {
             repository: (baseRepository + name),
             version,
             scripts: {
-                ...baseScripts,
                 ...scripts,
+                ...baseScripts,
             },
             ...packageJson,
         }, { spaces: 4 });
