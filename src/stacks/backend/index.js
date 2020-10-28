@@ -68,7 +68,7 @@ export const createBackendProject = opts => {
     };
 
     try {        
-        const resolvedLocation = path.join(path.resolve(location), 'backend');
+        const resolvedLocation = path.join(path.resolve(location), name, 'backend');
         
         fs.ensureDirSync(resolvedLocation);
         fs.copySync(path.join(__dirname, 'static'), resolvedLocation, { overwrite: true });
