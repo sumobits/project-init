@@ -14,7 +14,7 @@ const target = path.join(__dirname, 'dist');
 const copyStaticResources = () => {
     const files = glob.sync('src/**/static/**');
     files.forEach(file => fs.copySync(file, 
-        path.join(target, file.replace('src/', ''))));
+        path.join(target, file.replace('src/', ''), )));
 }
 
 gulp.task('package', () => {    

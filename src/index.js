@@ -4,11 +4,15 @@
 import prompts from 'prompts';
 import { 
     createBackendProject,
-    createFrontendMobileProject,
-    createFrontendWebProject,
+    createFrontendProject,
 } from './stacks';
 import { verifyEnvironment } from './utils';
 import { options } from './questions';
+
+process.on('uncaughtException', err => {
+    console.error(err);
+    console.log('Node NOT Exiting...');
+});
 
 (async () => {
     let ready = false;
@@ -18,23 +22,45 @@ import { options } from './questions';
     }
 
     const opts = await prompts(options);
-    const { stacks } = opts;
+    const { 
+        location,
+        name,
+        stacks,
+    } = opts;
 
     if (stacks && stacks.length > 0) {
-        stacks.forEach(async stack => {
-            if (stack === 'back') {
-                await createBackendProject(opts);
+        let result = -2;
+        stacks.forEach(stack => {
+            try {
+                if (stack === 'back') {
+                    result = createBackendProject(opts);
+                }
+                else if (stack === 'mobile' || stack === 'web') {
+                    result = createFrontendProject(opts, stack === 'mobile');
+                }
+                else if (stack === 'middle') {
+                    // TODO implement me.
+                    console.warn('Middleware application generation is not currently implemented');
+                    result = 0;
+                }
             }
-            else if (stack === 'front-mobile') {
-                await createFrontendMobileProject(opts);
-            }
-            else if (stack === 'front-web') {
-                createFrontendWebProject(opts);
+            catch (e) {
+                console.error(`Failed to create project ${name} @ ${location}: ${e.message}`);
+                console.trace();
+                process.exit(-1);
             }
         });
+
+        if (result === 0) {
+            console.info('Successfully generated project(s)');
+            process.exit(0);
+        }
+
+        console.error('Failed to generate project(s) please check console for errors');
+        process.exit(result);
     }
     else {
         console.warn('No stacks specified. Bye');
-        process.exit();
+        process.exit(1);
     }
 })();

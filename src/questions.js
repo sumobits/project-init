@@ -2,6 +2,16 @@
  * @format
  */
 
+ const filterStack = (stacks, selectedStack) => {
+     const filteredStacks = stacks.filter(stack => stack === selectedStack);
+
+     if (filteredStacks.length > 0) {
+         return true;
+     }
+
+     return false;
+ };
+
 export const options = [ {
         message: 'What is the project\'s name?',
         name: 'name',
@@ -15,29 +25,18 @@ export const options = [ {
     }, {
         choices: [
             { title: 'Backend', value: 'back' },
-            { title: 'Frontend Web', value: 'front-web' },
-            { title: 'Frontend Mobile', value: 'front-mobile' },
+            { title: 'Mobile', value: 'mobile' },
+            { title: 'Web', value: 'web' },
         ],
         hint: '- Space to select. Return to submit',
-        message: ('Is the project backend only, backend & mobile, backend & ' 
-            +' web, frontend web only  or frontend mobile only ?'),
-        max: 3,
+        message: 'Select all options which apply',
         min: 1,
         name: 'stacks',
         type: 'multiselect',
     }, {
         message: 'Include optional dependencies for stack?',
         name: 'optional',
-        type: (prev, values) => {
-            const { stacks } = values;
-            const filtedStacks = stacks.filter(stack => stack.indexOf('front-') >= 0);
-
-            if (filtedStacks.length === 0) {
-                return 'toggle';
-            }
-
-            return null;
-        },
+        type: 'toggle',
     }, {
         message: 'Include Firebase deependencies for stack?',
         name: 'firebase',
@@ -45,11 +44,8 @@ export const options = [ {
     }, {
         message: 'Include MongoDB dependecies for stack?',
         name: 'mongodb',
-        type: (prev, values) => {
-            const { stacks } = values;
-            const filtedStacks = stacks.filter(stack => stack.indexOf('front-') >= 0);
-
-            if (filtedStacks.length === 0) {
+        type: (prev, values) => { 
+            if(filterStack(values.stacks, 'back')) {
                 return 'toggle';
             }
 
@@ -58,14 +54,21 @@ export const options = [ {
     }, {
         message: 'Include Postgres dependencies for stack?',
         name: 'postgres',
-        type: (prev, values) => {
-            const { stacks } =  values;
-            const filtedStacks = stacks.filter(stack => stack.indexOf('front-') >= 0 );
-
-            if (!prev && filtedStacks.length === 0) {
+        type: (prev, values) => { 
+            if (!prev && filterStack(values.stacks, 'back')) {
                 return 'toggle';
             } 
             
+            return null;
+        },
+    }, {
+        message: 'Include Apollo dependencies for stack?',
+        name: 'apollo',
+        type: (prev, values) => {
+            if (filterStack(values.stacks, 'web')) {
+                return 'toggle';
+            }
+
             return null;
         },
     },

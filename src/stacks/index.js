@@ -2,7 +2,4 @@
  * @format
  */
 export { createBackendProject } from './backend';
-export { 
-    createFrontendMobileProject,
-    createFrontendWebProject,
- } from './frontend';
+export { createFrontendProject } from './frontend';

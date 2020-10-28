@@ -1,58 +1,33 @@
 /**
  * @format
  */
-import { 
-    exec,
-    execSync 
-} from 'child_process';
-import { stdout } from 'process';
+import { execSync } from 'child_process';
 
-const addDependency = (cwd, dependency, isDev) => {
+export const addDependency = (cwd, dependency, isDev) => {
     if (!dependency) return;
 
-    execSync(`yarn add ${dependency} ${isDev ? '--dev' : null}`, {
-        cwd,
-        stdio: 'inherit',
-    });
+    execSync(`yarn add ${dependency} ${isDev ? '--dev' : null}`, { cwd });
 };
 
-const createReactNativeProject = async (projectName, cwd) => {
-    if (!projectName || !cwd) return;
-
-    console.info(`Creating react-native app ${projectName}`);
-    return new Promise((resolve, reject) => {
-        exec(`cd ${cwd} && npx react-native init ${projectName}`, (err, stdout) =>{
-            if (err) {
-                console.error(`Failed to create react-native app ${projectName} - ${err.msg}`);
-                reject(false);
-            }
-
-            console.info(`Successfully created react-native app: ${projectName}`);
-            console.debug(stdout);
-            resolve(true);
-        });
-    });
-};
-
-const verifyEnvironment = async () => {
+export const verifyEnvironment = () => {
     console.info('------------------------------------------------');
     console.info('    Verifying environment ....');
     let verified = false;
 
     while (!verified) {
-        if (await verifyYarn()) {
-            if (await verifyNPX()) {
+        if (verifyYarn()) {
+            if (verifyNPX()) {
                 console.info('    Environment has been verified.');
                 verified = true;
             }
             else {
                 console.warn('        Installing NPX globally ....');
-                await installNPX();
+                installNPX();
             }
         }
         else {
             console.warn('        Installing Yarn globally ....');
-            await installYarn();
+            installYarn();
         }
     }
     console.info('------------------------------------------------');
@@ -63,6 +38,8 @@ const verifyEnvironment = async () => {
  * NOTES
  * non-exported functions below. for internal use only.
  */
+const isWindows = process.platform === 'win32';
+
 const installApp = async (cmd) => {
     if (!cmd) {
         throw new Error('improper usage of internal function: installApp');
@@ -92,9 +69,12 @@ const verifyApp = app => {
         throw new Error('improper usage of internal function: verifyApp');
     }
 
+    const cmd = `${isWindows ? 'where' : 'which'} ${app}`;
+
     return new Promise((resolve, reject) => {
-        exec(`which ${app}`, (err) => {
+        execSync(cmd, (err) => {
             if (err) {
+                console.log(`failed to verify app: ${app} - ${err.message}`);
                 reject(false);
             }
 
@@ -111,10 +91,4 @@ const verifyNPX = async () => {
 const verifyYarn = async () => {
     console.info('                Verifying Yarn globally ....');
     return await verifyApp('yarn');
-};
-
-export { 
-    addDependency,
-    createReactNativeProject,
-    verifyEnvironment,
 };
